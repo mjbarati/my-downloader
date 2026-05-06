@@ -1,0 +1,36 @@
+name: دانلودر من
+
+on:
+  workflow_dispatch:
+    inputs:
+      url:
+        description: 'لینک فایل مورد نظر'
+        required: true
+        type: string
+
+permissions:
+  contents: write
+
+jobs:
+  download:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: دریافت کدها
+        uses: actions/checkout@v4
+        
+      - name: ساخت پوشه دانلود
+        run: mkdir -p downloads
+        
+      - name: دانلود فایل
+        run: |
+          cd downloads
+          curl -L -O "${{ inputs.url }}"
+          
+      - name: ذخیره در مخزن
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add downloads/
+          git commit -m "فایل دانلود شد" || echo "خطایی نیست"
+          git push
